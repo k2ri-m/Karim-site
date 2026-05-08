@@ -1008,27 +1008,27 @@
             <div class="contact-grid">
                 <div class="contact-info reveal">
                     <a href="mailto:kareem445star@gmail.com" class="contact-link">
-                        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="16" rx="2"/><path d="M2 5l10 7 10-7"/></svg>
+                        <img src="mail.svg" style="width:22px;height:22px;" alt="Email">
                         kareem445sta@gmail.com
                     </a>
                     <a href="https://github.com/k2ri-m" target="_blank" class="contact-link">
-                        <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                        <img src="github.svg" style="width:22px;height:22px;" alt="GitHub">
                         GitHub
                     </a>
                     <a href="https://instagram.com/k.2ri_m" target="_blank" class="contact-link">
-                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
+                        <img src="instagram.svg" style="width:22px;height:22px;" alt="Instagram">
                         Instagram
                     </a>
                     <a href="https://wa.me/201124288869" target="_blank" class="contact-link">
-                        <svg viewBox="0 0 24 24"><path d="M17.5 14.5c-.3-.2-.8-.4-1.2-.3-.5.1-1.2.5-1.5.7-.3.2-.6.1-.9-.1-1.2-.7-2.3-1.8-3-3-.2-.3-.1-.6.1-.9.2-.3.6-.9.7-1.4.1-.5-.1-1-.3-1.3-.2-.3-.8-.9-1.1-1.1-.3-.2-.7-.2-1 0-.3.2-.8.7-1 1.2-.4.8-.4 1.7 0 2.5.7 1.6 2 3 3.6 4 .8.5 1.8.8 2.8.7.5 0 1.1-.3 1.4-.7.4-.4.5-1 .4-1.5-.2-.5-.5-.7-.8-.8z"/><path d="M12 2a10 10 0 0 0-8.8 14.8L2 22l5.4-1.2A10 10 0 1 0 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
+                        <img src="whatsapp-svgrepo-com.svg" style="width:22px;height:22px;" alt="WhatsApp">
                         WhatsApp
                     </a>
                 </div>
-                <form class="contact-form glass-card reveal" id="contactForm">
-                    <input type="text" placeholder="الاسم" required>
-                    <textarea placeholder="رسالتك..." required></textarea>
-                    <button type="submit" class="btn btn-primary" style="width:100%;">إرسال</button>
-                </form>
+               <form class="contact-form glass-card reveal" id="contactForm">
+    <input type="text" name="name" placeholder="الاسم" required>
+    <textarea name="message" placeholder="رسالتك..." required></textarea>
+    <button type="submit" class="btn btn-primary" style="width:100%;">إرسال</button>
+</form>
             </div>
         </div>
     </section>
@@ -1127,14 +1127,14 @@
 
         // Skills Grid
         const skills = [
-            { name: 'HTML', percent: 75, svg: '<svg viewBox="0 0 24 24"><path d="M4 2l1.5 17L12 22l6.5-3L20 2H4zm13 5H8.5l.3 3.5h8.4l-.5 5.5-4.7 1.5-4.7-1.5-.3-3h3l.2 1.5 1.8.5 1.8-.5.2-2.5H7l-.5-6h11l-.5 3z"/></svg>' },
-            { name: 'CSS', percent: 60, svg: '<svg viewBox="0 0 24 24"><path d="M4 2l1.5 17L12 22l6.5-3L20 2H4zm13.5 5H8l.3 3h8.7l-.5 5.5-4.5 1.5-4.5-1.5-.3-3h3l.2 1.5 1.6.5 1.6-.5.2-2.5H7l-.7-7h11.5l-.3 3z"/></svg>' },
+            { name: 'HTML', percent: 75, svg: '<img src="html-svgrepo-com.svg" style="width:40px;height:40px;" alt="HTML">' },
+            { name: 'CSS', percent: 60, svg: '<img src="css3-icon.svg" style="width:40px;height:40px;" alt="CSS">' },
             { name: 'JavaScript', percent: 30,
-                svg: '<svg viewBox="0 0 24 24"><path d="M2 2h20v20H2V2zm10 16.5c.6 0 1.2-.3 1.5-.8l1.3-.8c.2.3.4.6.9.6.5 0 .8-.3.8-.8V12h1.5v4.7c0 1.5-.9 2.3-2.3 2.3s-2.3-.8-2.3-2.3v-.7l1.6-.5zm-4 0c.6 0 1.2-.3 1.5-.8l1.3-.8c.2.3.4.6.9.6.5 0 .8-.3.8-.8v-4.2H11v4.7c0 1.5-.9 2.3-2.3 2.3S6.4 18 6.4 16.5v-.7l1.6-.5z"/></svg>' },
+                svg: '<img src="java-script-svgrepo-com.svg" style="width:40px;height:40px;" alt="JavaScript">' },
             { name: 'Responsive', percent: 50,
-                svg: '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="16" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="18" x2="12" y2="20"/></svg>' },
+                svg: '<img src="responsive-svgrepo-com.svg" style="width:40px;height:40px;" alt="Responsive">' },
             { name: 'GitHub', percent: 35,
-                svg: '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.2.68-.5v-1.7c-2.8.6-3.4-1.2-3.4-1.2-.4-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.6 1 1.6 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.3-.3-4.7-1.2-4.7-5.2a4 4 0 0 1 1.1-2.8c-.1-.3-.5-1.4.1-2.8 0 0 .9-.3 2.8 1.1a9.7 9.7 0 0 1 5.1 0c2-1.4 2.8-1.1 2.8-1.1.6 1.4.2 2.5.1 2.8a4 4 0 0 1 1.1 2.8c0 4-2.4 4.9-4.7 5.2.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg>' }
+                svg: '<img src="github.svg" style="width:40px;height:40px;" alt="GitHub">' }
         ];
         const skillsGrid = document.getElementById('skillsGrid');
         skills.forEach(s => {
