@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karim</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #0f0f1a;
+            --purple: #8b5cf6;
+            --purple-dark: #6d28d9;
+            --cyan: #06b6d4;
+            --white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            --radius: 20px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--purple) var(--bg-primary);
+        }
+        body {
+            font-family: 'Segoe UI', 'Tajawal', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+            line-height: 1.7;
+            position: relative;
+        }
+        /* Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--purple);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transition: transform 0.1s ease, width 0.3s, height 0.3s, border-color 0.3s;
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+        }
+        .cursor-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--white);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s;
+        }
+        .cursor.hover {
+            width: 50px;
+            height: 50px;
+            border-color: var(--cyan);
+            background: rgba(139, 92, 246, 0.1);
+            mix-blend-mode: normal;
+        }
+        .cursor-dot.hover {
+            width: 10px;
+            height: 10px;
+            background: var(--cyan);
+        }
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 200px 200px;
+        }
+        .mouse-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            opacity: 0.6;
+        }
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 750px;
+            height: 70px;
+            background: rgba(15, 15, 26, 0.7);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            transition: all 0.4s;
+        }
+        .navbar.scrolled {
+            background: rgba(15, 15, 26, 0.9);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            top: 10px;
+        }
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--purple), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            position: relative;
+            cursor: none;
+        }
+        .nav-links a:hover {
+            color: var(--white);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--purple);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: none;
+            z-index: 1001;
+        }
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: var(--white);
+            transition: all 0.3s;
+        }
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(30px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
+        }
+        .mobile-menu.active {
+            transform: translateY(0);
+        }
+        .mobile-menu ul {
+            list-style: none;
+            text-align: center;
+        }
+        .mobile-menu li {
+            margin: 25px 0;
+        }
+        .mobile-menu a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 2rem;
+            font-weight: 700;
+            cursor: none;
+        }
+        /* Sections */
+        section {
+            padding: 100px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, var(--purple), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.05;
+            background-image:
+                linear-gradient(rgba(139, 92, 246, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.3) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(60px, 60px);
+            }
+        }
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+        .hero-name {
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--purple) 50%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: nameGlow 3s ease-in-out infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes nameGlow {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 40px rgba(6, 182, 212, 0.5));
+            }
+        }
+        .typewriter-container {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            min-height: 40px;
+        }
+        .typewriter {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .cursor-type {
+            animation: blink 0.8s infinite;
+            color: var(--purple);
+        }
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+        .avatar-container {
+            margin: 40px auto;
+            width: 220px;
+            height: 220px;
+            perspective: 1000px;
+        }
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            transition: transform 0.1s ease-out, box-shadow 0.4s;
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar:hover {
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.4), 0 0 80px rgba(6, 182, 212, 0.2);
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 30px;
+            display: block;
+        }
+        .avatar-svg {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--purple-dark), var(--cyan));
+            opacity: 0.7;
+            border-radius: 30px;
+        }
+        .avatar-svg svg {
+            width: 70px;
+            height: 70px;
+            fill: var(--white);
+        }
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 30px;
+            transition: all var(--transition);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 20px 50px rgba(139, 92, 246, 0.15);
+        }
+        /* About */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .about-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--cyan);
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .stat-icon {
+            margin-bottom: 10px;
+        }
+        .stat-icon svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--purple);
+            fill: none;
+            stroke-width: 2;
+        }
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        .skill-card {
+            text-align: center;
+            padding: 25px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        .skill-icon {
+            margin-bottom: 15px;
+        }
+        .skill-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--cyan);
+        }
+        .skill-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple), var(--cyan));
+            border-radius: 10px;
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .skill-percent {
+            font-size: 0.8rem;
+            color: var(--cyan);
+            margin-top: 5px;
+        }
+        /* Projects */
+        .project-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius);
+            background: var(--glass-bg);
+            border: 1px solid transparent;
+            transition: all 0.5s;
+            cursor: none;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, var(--purple), transparent, var(--cyan), transparent);
+            animation: borderRotate 4s linear infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        .project-card-inner {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            margin: 1px;
+            padding: 25px;
+            position: relative;
+            z-index: 1;
+            height: 100%;
+        }
+        @keyframes borderRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .project-img {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--purple-dark), var(--bg-secondary));
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-img svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--cyan);
+        }
+        .project-tech {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        .tech-tag {
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--purple);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .project-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 10px 22px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            cursor: none;
+            border: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: var(--purple);
+            color: var(--white);
+        }
+        .btn-primary:hover {
+            background: #9b6dff;
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+        }
+        .btn-outline {
+            border: 2px solid var(--glass-border);
+            color: var(--white);
+            background: transparent;
+        }
+        .btn-outline:hover {
+            border-color: var(--cyan);
+            background: rgba(6, 182, 212, 0.1);
+        }
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-right: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 15px;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--purple), var(--cyan));
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding: 20px 25px;
+            border-radius: var(--radius);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            margin-right: 30px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            right: -41px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--cyan);
+        }
+        .timeline-year {
+            color: var(--cyan);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        /* Counter */
+        .counter-item {
+            text-align: center;
+            padding: 30px;
+        }
+        .counter-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--purple), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        /* Contact */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: none;
+        }
+        .contact-link:hover {
+            border-color: var(--purple);
+            background: rgba(139, 92, 246, 0.05);
+        }
+        .contact-link svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--cyan);
+            flex-shrink: 0;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--white);
+            font-family: inherit;
+            transition: all 0.3s;
+            outline: none;
+            cursor: none;
+        }
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+        .contact-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .footer-glow {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 100px;
+            background: radial-gradient(ellipse, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            animation: footerGlow 4s ease-in-out infinite;
+        }
+        @keyframes footerGlow {
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        /* Photography Grid */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .photo-card {
+            aspect-ratio: 1;
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            cursor: none;
+        }
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s;
+        }
+        .photo-card:hover img {
+            transform: scale(1.1);
+        }
+        .photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 50%, rgba(10, 10, 15, 0.9));
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: var(--white);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .photo-card:hover .photo-overlay {
+            opacity: 1;
+        }
+        /* Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: none;
+            z-index: 1;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .about-grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .hero-name {
+                font-size: 3.5rem;
+            }
+            .cursor,
+            .cursor-dot {
+                display: none;
+            }
+            body {
+                cursor: auto;
+            }
+            .btn,
+            .contact-link,
+            .contact-form input,
+            .contact-form textarea,
+            .nav-links a,
+            .hamburger,
+            .modal-close,
+            .project-card,
+            .mobile-menu a,
+            .photo-card {
+                cursor: pointer;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+    <div class="cursor-dot"></div>
+    <div class="mouse-glow" id="mouseGlow"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <ul>
+            <li><a href="#home" onclick="toggleMenu()">الرئيسية</a></li>
+            <li><a href="#about" onclick="toggleMenu()">عني</a></li>
+            <li><a href="#skills" onclick="toggleMenu()">المهارات</a></li>
+            <li><a href="#photography" onclick="toggleMenu()">التصوير</a></li>
+            <li><a href="#projects" onclick="toggleMenu()">المشاريع</a></li>
+            <li><a href="#contact" onclick="toggleMenu()">تواصل</a></li>
+        </ul>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">Karim</div>
+        <ul class="nav-links">
+            <li><a href="#home">الرئيسية</a></li>
+            <li><a href="#about">عني</a></li>
+            <li><a href="#skills">المهارات</a></li>
+            <li><a href="#photography">التصوير</a></li>
+            <li><a href="#projects">المشاريع</a></li>
+            <li><a href="#contact">تواصل</a></li>
+        </ul>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div id="particles-js"></div>
+        <div class="grid-bg"></div>
+        <div class="hero-content">
+            <div class="avatar-container floating" id="avatarContainer">
+                <div class="avatar" id="avatar3D">
+                    <!-- استبدل المسار بصورتك -->
+                    <img src="your-photo.jpg" alt="Karim"
+                    onerror="this.style.display='none'; this.parentElement.querySelector('.avatar-svg').style.display='flex';">
+                    <div class="avatar-svg" style="display:none;">
+                        <!-- SVG: شخص بسيط -->
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <h1 class="hero-name">Karim</h1>
+            <div class="typewriter-container">
+                <span class="typewriter" id="typewriter"></span><span class="cursor-type">|</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title reveal">عني</h2>
+            <div class="about-grid">
+                <div class="about-text reveal glass-card">
+                    <p>
+                        أنا كريم، عندي شغف بكل حاجة ليها علاقة بالإبداع — من تطوير الواجهات الأمامية
+                        لـ HTML و CSS و JavaScript، للتصوير الفوتوغرافي اللي بيمثل عيني على العالم.
+                        بحب أبني حاجات بسيطة وجميلة، وبتميز بالتواصل الجيد مع الناس والتعبير عن الأفكار بوضوح.
+                        مؤمن إن التفاصيل الصغيرة هي اللي بتفرق، سواء في سطر كود أو لقطة كاميرا.
+                    </p>
+                </div>
+                <div class="about-stats reveal">
+                    <div class="stat-item glass-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div class="stat-value">17</div>
+                        <div class="stat-label">العمر</div>
+                    </div>
+                    <div class="stat-item glass-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div class="stat-value">المنوفية</div>
+                        <div class="stat-label">المحافظة</div>
+                    </div>
+                    <div class="stat-item glass-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20"/><path d="M12 2a15 15 0 0 0 0 20"/></svg>
+                        </div>
+                        <div class="stat-value">عربي / English</div>
+                        <div class="stat-label">اللغات</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills">
+        <div class="container">
+            <h2 class="section-title reveal">المهارات التقنية</h2>
+            <div class="skills-grid" id="skillsGrid">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Photography -->
+    <section id="photography">
+        <div class="container">
+            <h2 class="section-title reveal">التصوير الفوتوغرافي</h2>
+            <p style="text-align:center;color:var(--text-secondary);margin-bottom:40px;max-width:600px;margin-left:auto;margin-right:auto;" class="reveal">
+                التصوير بالنسبالي مش مجرد هواية — دا طريقة أشوف بيها الجمال في التفاصيل اليومية.
+                كل صورة عندي بتحكي قصة، ودا اللي بحاول أعكسه في شغلي كمطور ويب: الاهتمام بالتفاصيل.
+            </p>
+            <div class="photo-grid">
+                <!-- ضع روابط صورك هنا -->
+                <div class="photo-card reveal glass-card" style="padding:0;">
+                    <img src="PXL_20260330_134252826.RAW-02.ORIGINAL.jpg" alt="صورة 1" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22400%22 height=%22400%22/%3E%3Ccircle fill=%22%238b5cf6%22 cx=%22200%22 cy=%22200%22 r=%2280%22 opacity=%220.3%22/%3E%3C/svg%3E'">
+                    <div class="photo-overlay">طبيعة ✦</div>
+                </div>
+                <div class="photo-card reveal glass-card" style="padding:0;">
+                    <img src="Versa Core Pro_Balance_20260325_172557325.Profile2 (1).jpg" alt="صورة 2" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22400%22 height=%22400%22/%3E%3Ccircle fill=%22%238b5cf6%22 cx=%22200%22 cy=%22200%22 r=%2280%22 opacity=%220.3%22/%3E%3C/svg%3E'">
+                    <div class="photo-overlay">غيوم ✦</div>
+                </div>
+                <div class="photo-card reveal glass-card" style="padding:0;">
+                    <img src="LRM_20260505_112845.jpg" alt="صورة 3" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22400%22 height=%22400%22/%3E%3Ccircle fill=%22%238b5cf6%22 cx=%22200%22 cy=%22200%22 r=%2280%22 opacity=%220.3%22/%3E%3C/svg%3E'">
+                    <div class="photo-overlay">ورد ✦</div>
+                </div>
+                <div class="photo-card reveal glass-card" style="padding:0;">
+                    <img src="PXL_20260305_175604162.RAW-02.ORIGINAL (3).jpg" alt="صورة 4" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%231a1a2e%22 width=%22400%22 height=%22400%22/%3E%3Ccircle fill=%22%238b5cf6%22 cx=%22200%22 cy=%22200%22 r=%2280%22 opacity=%220.3%22/%3E%3C/svg%3E'">
+                    <div class="photo-overlay">تفاصيل ✦</div>
+                </div>
+            </div>
+            <p style="text-align:center;color:var(--text-secondary);margin-top:20px;font-size:0.85rem;">
+                بعض من أعمالي في التصوير — لمزيد من الصور تابعني على
+                <a href="https://instagram.com/k.2ri_m" target="_blank" style="color:var(--cyan);">Instagram</a>
+            </p>
+        </div>
+    </section>
+
+
+    <!-- Projects -->
+    <section id="projects">
+        <div class="container">
+            <h2 class="section-title reveal">مشروعي التدريبي</h2>
+            <div id="projectsGrid">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title reveal">تواصل معايا</h2>
+            <div class="contact-grid">
+                <div class="contact-info reveal">
+                    <a href="mailto:kareem445star@gmail.com" class="contact-link">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="16" rx="2"/><path d="M2 5l10 7 10-7"/></svg>
+                        kareem445sta@gmail.com
+                    </a>
+                    <a href="https://github.com/k2ri-m" target="_blank" class="contact-link">
+                        <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                        GitHub
+                    </a>
+                    <a href="https://instagram.com/k.2ri_m" target="_blank" class="contact-link">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
+                        Instagram
+                    </a>
+                    <a href="https://wa.me/201124288869" target="_blank" class="contact-link">
+                        <svg viewBox="0 0 24 24"><path d="M17.5 14.5c-.3-.2-.8-.4-1.2-.3-.5.1-1.2.5-1.5.7-.3.2-.6.1-.9-.1-1.2-.7-2.3-1.8-3-3-.2-.3-.1-.6.1-.9.2-.3.6-.9.7-1.4.1-.5-.1-1-.3-1.3-.2-.3-.8-.9-1.1-1.1-.3-.2-.7-.2-1 0-.3.2-.8.7-1 1.2-.4.8-.4 1.7 0 2.5.7 1.6 2 3 3.6 4 .8.5 1.8.8 2.8.7.5 0 1.1-.3 1.4-.7.4-.4.5-1 .4-1.5-.2-.5-.5-.7-.8-.8z"/><path d="M12 2a10 10 0 0 0-8.8 14.8L2 22l5.4-1.2A10 10 0 1 0 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"/></svg>
+                        WhatsApp
+                    </a>
+                </div>
+                <form class="contact-form glass-card reveal" id="contactForm">
+                    <input type="text" placeholder="الاسم" required>
+                    <textarea placeholder="رسالتك..." required></textarea>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">إرسال</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-glow"></div>
+        <div class="nav-logo" style="font-size:1.5rem;margin-bottom:10px;">Karim</div>
+        <p style="color:var(--text-secondary);font-size:0.8rem;margin-top:10px;">&copy; 2026 كل الحقوق محفوظة</p>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js">
+    </script>
+    <script>
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const mouseGlow = document.getElementById('mouseGlow');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursorDot.style.left = e.clientX + 'px';
+            cursorDot.style.top = e.clientY + 'px';
+            mouseGlow.style.left = e.clientX + 'px';
+            mouseGlow.style.top = e.clientY + 'px';
+        });
+        const hoverElements = document.querySelectorAll(
+            'a, button, .btn, .project-card, .skill-card, .hamburger, .contact-link, input, textarea, .modal-close, .photo-card');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => { cursor.classList.add('hover');
+                cursorDot.classList.add('hover'); });
+            el.addEventListener('mouseleave', () => { cursor.classList.remove('hover');
+                cursorDot.classList.remove('hover'); });
+        });
+
+        // Mobile Menu
+        function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
+
+        // Navbar scroll
+        window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window
+                .scrollY > 50); });
+
+        // Particles
+        particlesJS('particles-js', {
+            particles: { number: { value: 50, density: { enable: true, value_area: 800 } }, color: { value: '#8b5cf6' },
+                shape: { type: 'circle' }, opacity: { value: 0.5, random: true }, size: { value: 2, random: true },
+                line_linked: { enable: true, distance: 150, color: '#06b6d4', opacity: 0.2, width: 1 }, move: { enable: true,
+                    speed: 1, direction: 'none', random: true } },
+            interactivity: { detect_on: 'window', events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true,
+                        mode: 'push' } } },
+            retina_detect: true
+        });
+
+        // Typewriter
+        const phrases = ['مطور واجهات أمامية', 'هاوي تصوير فوتوغرافي', 'بحب أبني تجارب بسيطة وجميلة'];
+        let phraseIndex = 0,
+            charIndex = 0,
+            isDeleting = false;
+        const typewriterEl = document.getElementById('typewriter');
+
+        function typeWriter() {
+            const current = phrases[phraseIndex];
+            typewriterEl.textContent = current.substring(0, isDeleting ? --charIndex : ++charIndex);
+            let speed = isDeleting ? 40 : 80;
+            if (!isDeleting && charIndex === current.length) { speed = 2000;
+                isDeleting = true; } else if (isDeleting && charIndex === 0) { isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                speed = 500; }
+            setTimeout(typeWriter, speed);
+        }
+        typeWriter();
+
+        // 3D Avatar
+        const avatar3D = document.getElementById('avatar3D');
+        const avatarContainer = document.getElementById('avatarContainer');
+        avatarContainer.addEventListener('mousemove', (e) => {
+            const rect = avatarContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left,
+                y = e.clientY - rect.top;
+            const rX = (y - rect.height / 2) / 10,
+                rY = (rect.width / 2 - x) / 10;
+            avatar3D.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg)`;
+        });
+        avatarContainer.addEventListener('mouseleave', () => { avatar3D.style.transform =
+            'rotateX(0deg) rotateY(0deg)'; });
+
+        // Skills Grid
+        const skills = [
+            { name: 'HTML', percent: 75, svg: '<svg viewBox="0 0 24 24"><path d="M4 2l1.5 17L12 22l6.5-3L20 2H4zm13 5H8.5l.3 3.5h8.4l-.5 5.5-4.7 1.5-4.7-1.5-.3-3h3l.2 1.5 1.8.5 1.8-.5.2-2.5H7l-.5-6h11l-.5 3z"/></svg>' },
+            { name: 'CSS', percent: 60, svg: '<svg viewBox="0 0 24 24"><path d="M4 2l1.5 17L12 22l6.5-3L20 2H4zm13.5 5H8l.3 3h8.7l-.5 5.5-4.5 1.5-4.5-1.5-.3-3h3l.2 1.5 1.6.5 1.6-.5.2-2.5H7l-.7-7h11.5l-.3 3z"/></svg>' },
+            { name: 'JavaScript', percent: 30,
+                svg: '<svg viewBox="0 0 24 24"><path d="M2 2h20v20H2V2zm10 16.5c.6 0 1.2-.3 1.5-.8l1.3-.8c.2.3.4.6.9.6.5 0 .8-.3.8-.8V12h1.5v4.7c0 1.5-.9 2.3-2.3 2.3s-2.3-.8-2.3-2.3v-.7l1.6-.5zm-4 0c.6 0 1.2-.3 1.5-.8l1.3-.8c.2.3.4.6.9.6.5 0 .8-.3.8-.8v-4.2H11v4.7c0 1.5-.9 2.3-2.3 2.3S6.4 18 6.4 16.5v-.7l1.6-.5z"/></svg>' },
+            { name: 'Responsive', percent: 50,
+                svg: '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="16" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="18" x2="12" y2="20"/></svg>' },
+            { name: 'GitHub', percent: 35,
+                svg: '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.2.68-.5v-1.7c-2.8.6-3.4-1.2-3.4-1.2-.4-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.6 1 1.6 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.7-1.4-2.3-.3-4.7-1.2-4.7-5.2a4 4 0 0 1 1.1-2.8c-.1-.3-.5-1.4.1-2.8 0 0 .9-.3 2.8 1.1a9.7 9.7 0 0 1 5.1 0c2-1.4 2.8-1.1 2.8-1.1.6 1.4.2 2.5.1 2.8a4 4 0 0 1 1.1 2.8c0 4-2.4 4.9-4.7 5.2.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg>' }
+        ];
+        const skillsGrid = document.getElementById('skillsGrid');
+        skills.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'glass-card skill-card reveal';
+            card.innerHTML = `
+                <div class="skill-icon">${s.svg}</div>
+                <div class="skill-name">${s.name}</div>
+                <div class="progress-bar"><div class="progress-fill" data-width="${s.percent}"></div></div>
+                <div class="skill-percent">${s.percent}%</div>`;
+            skillsGrid.appendChild(card);
+        });
+
+        // Single Project
+        const projects = [{
+            name: 'موقعي الشخصي',
+            desc: 'أول مشروع تدريبي كامل — صفحة تعريفة بتصميم متجاوب وفيها Animations خفيفة.',
+            tech: ['HTML', 'CSS', 'JavaScript'],
+            svg: '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="16" rx="2"/><circle cx="8" cy="8" r="2"/><path d="M14 14l4 4"/><circle cx="14" cy="14" r="5"/></svg>'
+        }];
+        const projectsGrid = document.getElementById('projectsGrid');
+        projects.forEach((p, i) => {
+            const card = document.createElement('div');
+            card.className = 'project-card reveal';
+            card.innerHTML = `
+                <div class="project-card-inner">
+                    <div class="project-img">${p.svg}</div>
+                    <h3 style="margin-bottom:10px;text-align:center;">${p.name}</h3>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;text-align:center;">${p.desc}</p>
+                    <div class="project-tech">${p.tech.map(t => `<span class="tech-tag">${t}</span>`).join('')}</div>
+                    <div class="project-links">
+                        <a href="#" class="btn btn-primary" onclick="openProjectModal(0); return false;">استعراض</a>
+                        <a href="#" target="_blank" class="btn btn-outline">الكود</a>
+                    </div>
+                </div>`;
+            projectsGrid.appendChild(card);
+        });
+
+        // Modal
+        function openProjectModal(i) {
+            const p = projects[i];
+            document.getElementById('modalBody').innerHTML = `
+                <div class="project-img" style="height:220px;margin-bottom:20px;">${p.svg}</div>
+                <h2 style="text-align:center;">${p.name}</h2>
+                <p style="color:var(--text-secondary);margin:15px 0;text-align:center;">${p.desc}</p>
+                <div class="project-tech">${p.tech.map(t => `<span class="tech-tag">${t}</span>`).join('')}</div>
+                <div class="project-links" style="margin-top:20px;">
+                    <a href="#" class="btn btn-primary">زيارة الموقع</a>
+                    <a href="https://github.com/k2ri-m/Karim-site" target="_blank" class="btn btn-outline">GitHub</a>
+                </div>`;
+            document.getElementById('projectModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('projectModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        document.getElementById('projectModal').addEventListener('click', e => { if (e.target === e.currentTarget)
+        closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Contact Form - Telegram Webhook
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('button');
+    const originalText = btn.textContent;
+    btn.textContent = 'جاري الإرسال...';
+    btn.disabled = true;
+
+    const name = this.querySelector('input[name="name"]').value;
+    const message = this.querySelector('textarea[name="message"]').value;
+
+    const BOT_TOKEN = '8608574116:AAEV20vF1EwF3n8XN6jNlPzEFQbUVvZEg-E';
+    const CHAT_ID = '8774188998';
+
+    const text = `📬 رسالة جديدة من موقعك الشخصي\n\n👤 الاسم: ${name}\n\n💬 الرسالة:\n${message}`;
+
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                btn.textContent = 'تم الإرسال ✓';
+                btn.style.background = '#06b6d4';
+                this.reset();
+            } else {
+                throw new Error('فشل');
+            }
+        })
+        .catch(() => {
+            btn.textContent = 'خطأ - حاول مرة أخرى';
+            btn.style.background = '#ef4444';
+        })
+        .finally(() => {
+            btn.disabled = false;
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+            }, 3000);
+        });
+});
+
+        // Scroll Reveal
+        const revealEls = document.querySelectorAll('.reveal');
+
+        function checkReveal() {
+            const wh = window.innerHeight;
+            revealEls.forEach(el => {
+                if (el.getBoundingClientRect().top < wh - 100) {
+                    el.classList.add('active');
+                    const pf = el.querySelector('.progress-fill');
+                    if (pf && !pf.style.width) pf.style.width = pf.dataset.width + '%';
+                }
+            });
+        }
+        window.addEventListener('scroll', checkReveal);
+        window.addEventListener('load', checkReveal);
+
+        // Counter
+        let counted = false;
+
+        function animateCounters() {
+            if (counted) return;
+            const cs = document.getElementById('counterGrid');
+            if (cs.getBoundingClientRect().top < window.innerHeight - 100) {
+                counted = true;
+                document.querySelectorAll('.counter-number').forEach(c => {
+                    const t = +c.dataset.target,
+                        d = 2000,
+                        s = performance.now();
+
+                    function upd(now) {
+                        const p = Math.min((now - s) / d, 1);
+                        c.textContent = Math.floor((1 - Math.pow(1 - p, 3)) * t) + '+';
+                        if (p < 1) requestAnimationFrame(upd);
+                    }
+                    requestAnimationFrame(upd);
+                });
+            }
+        }
+        window.addEventListener('scroll', animateCounters);
+        window.addEventListener('load', animateCounters);
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        setTimeout(checkReveal, 300);
+    </script>
+</body>
+</html>
