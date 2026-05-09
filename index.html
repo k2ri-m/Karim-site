@@ -1053,6 +1053,24 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js">
     </script>
     <script>
+// إرسال إشعارات Webpushr
+function sendWebPushrNotification(title, message, targetUrl) {
+    fetch('https://api.webpushr.com/v1/notification/send/all', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'webpushrKey': '4b51b5294b72ffc42272da6bf974fcc5',
+            'webpushrAuthToken': '121220'
+        },
+        body: JSON.stringify({
+            title: title,
+            message: message,
+            target_url: targetUrl
+        })
+    });
+}
+</script>
+    <script>
         // Cursor
         const cursor = document.querySelector('.cursor');
         const cursorDot = document.querySelector('.cursor-dot');
@@ -1289,5 +1307,10 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
 
         setTimeout(checkReveal, 300);
     </script>
+    <!-- start webpushr tracking code --> 
+<script>(function(w,d, s, id) {if(typeof(w.webpushr)!=='undefined') return;w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};var js, fjs = d.getElementsByTagName(s)[0];js = d.createElement(s); js.id = id;js.async=1;js.src = "https://cdn.webpushr.com/app.min.js";
+fjs.parentNode.appendChild(js);}(window,document, 'script', 'webpushr-jssdk'));
+webpushr('setup',{'key':'BJID8tr8Fh8mM5adQEX9AWPYLL0gAf41uZ6v3ipEb1_d8vud57r6A7VxqMRIxn5Xn2nOSocGTNPf8la8BfQWucU' });</script>
+<!-- end webpushr tracking code -->
 </body>
 </html>
