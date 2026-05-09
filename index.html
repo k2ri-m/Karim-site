@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Karim</title>
+    <link rel="icon" type="image/svg+xml" href="your-icon.svg">
     <style>
         :root {
             --bg-primary: #0a0a0f;
@@ -1275,9 +1276,10 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
         let counted = false;
 
         function animateCounters() {
-            if (counted) return;
-            const cs = document.getElementById('counterGrid');
-            if (cs.getBoundingClientRect().top < window.innerHeight - 100) {
+    if (counted) return;
+    const cs = document.getElementById('counterGrid');
+    if (!cs) return; // لو مش موجود، اخرج من الدالة
+    if (cs.getBoundingClientRect().top < window.innerHeight - 100) {
                 counted = true;
                 document.querySelectorAll('.counter-number').forEach(c => {
                     const t = +c.dataset.target,
